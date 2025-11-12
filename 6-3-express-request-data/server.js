@@ -112,9 +112,28 @@ const PORT = 3000;
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
+//  *   - create GET /echo
+//  *   - read "name" and "age" from req.query
+//  *   - if name OR age missing → return 400 JSON: { ok:false, error:"name & age required" }
+//  *   - else return JSON: { ok:true, name, age, msg:"Hello <name>, you are <age>" }
+//  *   HINT:
+//  *     app.get("/echo", (req,res)=>{ ... });
+//  *     const {name, age} = req.query;
+//  *
 // Query params: /echo?name=Ali&age=22
-
+app.get("/echo", (req, res) => {
+  const { name, age } = req.query;
+  if (!name || !age) {
+    res.json({ ok: true, name, age, msg: `Hello ${name}, you are ${age}` });
+    return;
+  }
+  res.json({ ok: false, error: "name & age required" });
+});
 // Route params: /profile/First/Last
+app.get("/profile/:first/:last", (req, res) => {
+  const { first, last } = req.params;
+  res.json({ ok: true, fullName: `${first} ${last}` });
+});
 
 // Route param middleware example: /users/42
 
