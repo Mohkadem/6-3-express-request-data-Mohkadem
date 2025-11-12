@@ -124,10 +124,10 @@ app.listen(PORT, () => {
 app.get("/echo", (req, res) => {
   const { name, age } = req.query;
   if (!name || !age) {
-    res.json({ ok: true, name, age, msg: `Hello ${name}, you are ${age}` });
+    res.status(400).json({ ok: false, error: "name & age required" });
     return;
   }
-  res.json({ ok: false, error: "name & age required" });
+  res.json({ ok: true, name, age, msg: `Hello ${name}, you are ${age}` });
 });
 // Route params: /profile/First/Last
 app.get("/profile/:first/:last", (req, res) => {
@@ -138,11 +138,16 @@ app.get("/profile/:first/:last", (req, res) => {
 // Route param middleware example: /users/42
 app.param("userId", (req, res, next, userId) => {
   const userIdNum = Number(userId);
-  if (userIdNum <= 0) {
-    res.json({ ok: false, error: "userId must be positive number" });
+  if (isNaN(userIdNum) || userIdNum <= 0) {
+    res
+      .status(400)
+      .json({ ok: false, error: "userId must be positive number" });
     return;
   }
   req.userIdNum = userIdNum;
   next();
 });
 // Route params: /users/:userId route
+app.get("/users/:userId", (req, res) => {
+  res.json({ ok: true, userId: req.userIdNum });
+});
